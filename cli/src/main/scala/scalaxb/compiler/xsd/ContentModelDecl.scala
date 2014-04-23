@@ -212,15 +212,24 @@ object Facetable {
     }
 }
 
-case class EnumerationDecl[A](value: A) extends Facetable[A]
+case class EnumerationDecl[A](key:A, value: A) extends Facetable[A]
 
 object EnumerationDecl {
-  def fromXML(node: scala.xml.Node, base: XsTypeSymbol, config: ParserConfig) =
+  def fromXML(node: scala.xml.Node, base: XsTypeSymbol, config: ParserConfig) = {
+    val nodeValue: String = (node \ "@value").text
     base match {
       case XsQName =>
-        val (ns, localPart) = TypeSymbolParser.splitTypeName((node \ "@value").text, config.scope, config.targetNamespace)
+        val (ns, localPart) = TypeSymbolParser.splitTypeName(nodeValue, config.scope, config.targetNamespace)
         val qname = new javax.xml.namespace.QName(ns.orNull, localPart)
-        EnumerationDecl(qname)
-      case _ => EnumerationDecl((node \ "@value").text)
+        EnumerationDecl(qname, qname)
+      case _ => {
+        val serializationInfo = (node \ "annotation" \ "appinfo" \ "EnumerationValue").text
+        if (serializationInfo.isEmpty) {
+          EnumerationDecl(nodeValue, nodeValue)
+        } else {
+          EnumerationDecl(serializationInfo, nodeValue)
+        }
+      }
     }
+  }
 }

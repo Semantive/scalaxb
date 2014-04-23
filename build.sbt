@@ -1,8 +1,11 @@
 import Dependencies._
 import Common._
 
+
+
 val commonSettings = Seq(
-    version := "1.1.3-SNAPSHOT",
+//    version := "1.1.3-SNAPSHOT",
+    version := "local-SNAPSHOT",
     organization := "org.scalaxb",
     homepage := Some(url("http://scalaxb.org")),
     licenses := Seq("MIT License" -> url("https://github.com/eed3si9n/scalaxb/blob/master/LICENSE")),
@@ -10,7 +13,8 @@ val commonSettings = Seq(
     scalaVersion := "2.10.3",
     crossScalaVersions := Seq("2.10.3", "2.9.2", "2.9.1"),
     scalacOptions := Seq("-deprecation", "-unchecked"),
-    parallelExecution in Test := false
+    parallelExecution in Test := false,
+    resolvers += ("typesafe" at "http://repo.typesafe.com/typesafe/ivy-releases/")
   ) ++ sonatypeSettings ++ lsSettings
 
 val app = (project in file("cli")).
